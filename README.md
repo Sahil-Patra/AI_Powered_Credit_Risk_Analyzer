@@ -35,20 +35,20 @@ CreditRiskProject/
 ├── train_model.py           # ML Pipeline (Data -> Preprocessing -> Training)
 ├── requirements.txt         # Project dependencies
 └── README.md                # Documentation
-
+```
 ⚙️ How to Run Locally
 Clone the repository:
-code
-Bash
+```Bash
 git clone https://github.com/YOUR_USERNAME/CreditRiskProject.git
+```
 Install dependencies:
-code
-Bash
+```Bash
 pip install -r requirements.txt
+```
 Run the dashboard:
-code
-Bash
+```Bash
 streamlit run app.py
+```
 
 ## 📈 Model Performance
 
