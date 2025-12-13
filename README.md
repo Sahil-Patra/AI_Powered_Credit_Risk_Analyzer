@@ -52,5 +52,5 @@ streamlit run app.py
 
 ## 📈 Model Performance
 
-Recall (Sensitivity): Optimized to catch potential defaulters.
-Explainability: Validated top predictors (Duration, Credit Amount, Checking Status) match banking domain knowledge.
+**Recall (Sensitivity)**: Optimized to catch potential defaulters.
+**Explainability**: Validated top predictors (Duration, Credit Amount, Checking Status) match banking domain knowledge.
