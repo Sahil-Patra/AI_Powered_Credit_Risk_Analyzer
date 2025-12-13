@@ -1,0 +1,6 @@
+[theme]
+primaryColor = "#0048A5"    # Professional Bank Blue
+backgroundColor = "#FFFFFF" # Clean White
+secondaryBackgroundColor = "#F0F2F6" # Light Grey
+textColor = "#31333F"
+font = "sans serif"
