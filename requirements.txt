@@ -5,7 +5,3 @@ scikit-learn
 xgboost
 shap
 matplotlib
-seaborn
-plotly
-imbalanced-learn
-joblib
