@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import xgboost as xgb
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-# REMOVED: from imblearn.over_sampling import SMOTE (This was causing the crash)
+import numpy as np
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Credit Risk Analyzer", layout="wide")
@@ -44,13 +44,12 @@ def build_model():
     scaler = StandardScaler()
     X_train_scaled = scaler.fit_transform(X_train)
     
-    # 4. Train Model (Using scale_pos_weight instead of SMOTE)
-    # This tells XGBoost: "Pay 3x more attention to defaults because they are rare"
+    # 4. Train Model (Using scale_pos_weight for imbalance)
     ratio = float(np.sum(y_train == 0)) / np.sum(y_train == 1)
     
     model = xgb.XGBClassifier(
         objective='binary:logistic', 
-        scale_pos_weight=ratio,  # Handles imbalance natively
+        scale_pos_weight=ratio,
         random_state=42
     )
     model.fit(X_train_scaled, y_train)
@@ -59,9 +58,6 @@ def build_model():
     explainer = shap.TreeExplainer(model)
     
     return model, explainer, scaler, feature_names
-
-# Import numpy here just for the ratio calculation above
-import numpy as np
 
 # --- LOAD MODEL ---
 with st.spinner('Building Model...'):
@@ -78,15 +74,50 @@ st.sidebar.header("Applicant Data")
 input_dict = {}
 
 col1, col2 = st.sidebar.columns(2)
+
+# --- NEW INPUTS ADDED HERE ---
+
+# 1. Loan Duration & Amount
 input_dict['duration'] = st.sidebar.slider("Loan Duration (Months)", 6, 72, 24)
 input_dict['credit_amount'] = st.sidebar.number_input("Credit Amount", 500, 20000, 4000)
+
+# 2. Personal Info
 input_dict['age'] = st.sidebar.slider("Age", 18, 75, 30)
 input_dict['installment_rate'] = st.sidebar.slider("Installment Rate (% of Income)", 1, 4, 3)
 
-# Fill rest with defaults
+# 3. Employment (Categorical Mapping)
+# Map simplified user choices to the code values (0=Unemployed ... 4=>7 years)
+st.sidebar.markdown("---")
+emp_option = st.sidebar.selectbox(
+    "Employment Status",
+    ["Unemployed", "< 1 Year", "1-4 Years", "4-7 Years", "> 7 Years"]
+)
+# Simple map based on alphabetical sort of original data codes (A71-A75)
+emp_map = {"Unemployed": 0, "< 1 Year": 1, "1-4 Years": 2, "4-7 Years": 3, "> 7 Years": 4}
+input_dict['employment'] = emp_map[emp_option]
+
+# 4. Savings (Categorical Mapping)
+# (0=Low ... 4=Unknown/No Account)
+sav_option = st.sidebar.selectbox(
+    "Savings Balance",
+    ["Low (< 100 DM)", "Medium (100-500 DM)", "High (500-1000 DM)", "Very High (> 1000 DM)", "Unknown/No Account"]
+)
+sav_map = {"Low (< 100 DM)": 0, "Medium (100-500 DM)": 1, "High (500-1000 DM)": 2, "Very High (> 1000 DM)": 3, "Unknown/No Account": 4}
+input_dict['savings'] = sav_map[sav_option]
+
+# 5. Property (Categorical Mapping)
+# (0=Real Estate ... 3=None)
+prop_option = st.sidebar.selectbox(
+    "Property Owned",
+    ["Real Estate", "Building Society Savings", "Car / Other", "None"]
+)
+prop_map = {"Real Estate": 0, "Building Society Savings": 1, "Car / Other": 2, "None": 3}
+input_dict['property'] = prop_map[prop_option]
+
+# Fill rest with defaults (using 2.0 as average)
 for feature in feature_names:
     if feature not in input_dict:
-        input_dict[feature] = 0.0
+        input_dict[feature] = 2.0
 
 if st.button("Analyze Risk", type="primary"):
     # Process Input
