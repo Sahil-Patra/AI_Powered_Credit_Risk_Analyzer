@@ -12,4 +12,4 @@ jobs:
     steps:
       - name: Wake up Streamlit App
         run: |
-          curl https://your-app-name.streamlit.app/
+          curl https://aipoweredcreditriskanalyzer-rednfqu7pfy4rjyqx46ltt.streamlit.app/
