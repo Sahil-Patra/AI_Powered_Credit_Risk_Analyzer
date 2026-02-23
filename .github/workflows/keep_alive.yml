@@ -2,9 +2,7 @@ name: Keep Streamlit Alive
 
 on:
   schedule:
-    - cron: "35 3 * * *"
-    - cron: "30 8 * * *"
-    - cron: "30 11 * * *"
+    - cron: "0 */6 * * *"
   workflow_dispatch: 
 
 jobs:
@@ -13,4 +11,4 @@ jobs:
     steps:
       - name: Check website status
         run: |
-          curl -I https://aipoweredcreditriskanalyzer-rednfqu7pfy4rjyqx46ltt.streamlit.app/
+          curl -s https://aipoweredcreditriskanalyzer-rednfqu7pfy4rjyqx46ltt.streamlit.app/ > /dev/null
