@@ -8,9 +8,7 @@ from sklearn.preprocessing import StandardScaler
 from imblearn.over_sampling import SMOTE
 from sklearn.metrics import classification_report
 
-# 1. LOAD DATA (Using the URL directly so you don't need to download files)
-# We are using the "Give Me Some Credit" dataset logic but adapting for the German Credit context in your guide
-# or simply using the German dataset as suggested in the guide:
+# 1. LOAD DATA
 url = "https://archive.ics.uci.edu/ml/machine-learning-databases/statlog/german/german.data"
 names = ['status', 'duration', 'credit_history', 'purpose', 'credit_amount', 'savings', 'employment', 
          'installment_rate', 'personal_status_sex', 'guarantors', 'residence_since', 'property', 'age', 
@@ -23,8 +21,7 @@ df['target'] = df['target'].map({1: 0, 2: 1})
 
 print("Data loaded. Rows:", len(df))
 
-# 2. PREPROCESSING (Phase 1 from guide)
-# Simple encoding for this demo
+# 2. PREPROCESSING
 categorical_cols = df.select_dtypes(include=['object']).columns
 for col in categorical_cols:
     df[col] = df[col].astype('category').cat.codes
@@ -47,7 +44,7 @@ X_test_scaled = scaler.transform(X_test)
 # Save the feature names for later use in the app
 feature_names = X.columns.tolist()
 
-# 3. TRAIN MODEL (Phase 2 from guide)
+# 3. TRAIN MODEL
 print("Training XGBoost Model...")
 scale_pos_weight = (y_train == 0).sum() / (y_train == 1).sum()
 
@@ -63,12 +60,11 @@ model.fit(X_train_scaled, y_train_balanced)
 
 print("Model Trained.")
 
-# 4. EXPLAINABILITY (Phase 3 from guide)
+# 4. EXPLAINABILITY 
 print("Generating SHAP Explainer...")
 explainer = shap.TreeExplainer(model)
 
 # 5. SAVE ARTIFACTS (Crucial for app.py)
-# Create a 'models' folder first if it doesn't exist
 import os
 if not os.path.exists('models'):
     os.makedirs('models')
