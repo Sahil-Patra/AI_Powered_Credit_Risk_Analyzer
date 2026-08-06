@@ -18,7 +18,7 @@ def load_ml_artifacts():
         defaults = joblib.load('models/feature_defaults.pkl')
         return model, explainer, feature_names, defaults
     except Exception as e:
-        st.error(f"Failed to load model artifacts: {e}. Please run 'train.py' first.")
+        st.error(f"Failed to load model artifacts: {e}. Please run 'train_model.py' first.")
         return None, None, None, None
 
 model, explainer, feature_names, feature_defaults = load_ml_artifacts()
