@@ -1,45 +1,52 @@
 # 🏦 AI-Powered Credit Risk Analyzer
 
-![Python](https://img.shields.io/badge/Python-3.9-blue)
+![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
 ![Streamlit](https://img.shields.io/badge/Streamlit-App-ff4b4b)
-![XGBoost](https://img.shields.io/badge/XGBoost-Model-green)
+![XGBoost](https://img.shields.io/badge/XGBoost-Native%20Categorical-green)
 ![SHAP](https://img.shields.io/badge/SHAP-Explainability-orange)
+![MLOps](https://img.shields.io/badge/MLOps-Decoupled%20Architecture-purple)
 
-### 🚀 [Click Here to View Live Dashboard](https://share.streamlit.io/YOUR_USERNAME/REPO_NAME)
+### 🚀 [Click Here to View Live Dashboard](https://aipoweredcreditriskanalyzer-rednfqu7pfy4rjyqx46ltt.streamlit.app/))
 
 ## 📌 Project Overview
-**Problem:** Banks lose millions annually due to loan defaults. Traditional credit scoring models are often "black boxes" that fail to explain *why* an applicant was rejected, leading to regulatory issues and poor customer experience.
+**Problem:** Financial institutions face millions in losses annually from loan defaults. Traditional credit scoring models often act as "black boxes" that fail to explain *why* an applicant was rejected, leading to compliance risks, poor auditability, and poor customer experience.
 
-**Solution:** This project is an end-to-end Machine Learning web application that:
-1.  **Predicts Loan Default Risk** using a robust XGBoost classifier.
-2.  **Explains Decisions** using SHAP (Shapley Additive Explanations) values, providing transparency on exactly which factors (e.g., Age, Debt-to-Income) contributed to the rejection.
-3.  **Reduces Risk:** Prioritizes identifying high-risk borrowers to minimize financial loss.
+**Solution:** This project is an end-to-end Machine Learning web application designed with enterprise MLOps patterns:
+1. **Decoupled Architecture:** Separates model training (`train_model.py`) from real-time web inference (`app.py`), loading pre-compiled artifacts for zero-latency startup.
+2. **Native Categorical XGBoost:** Predicts default risk using cost-sensitive gradient boosting without distorting feature distributions via manual scaling.
+3. **Explainable AI (XAI):** Uses SHAP (Shapley Additive Explanations) waterfall visualizations to provide transparent, feature-level decision drivers for every loan application.
 
 ## 🛠️ Tech Stack
-*   **Frontend:** Streamlit (Web Dashboard)
-*   **Backend:** Python, Pandas
-*   **Machine Learning:** XGBoost (Gradient Boosting), Scikit-Learn
-*   **Explainability:** SHAP (Game Theoretic approach to feature importance)
-*   **Data:** German Credit Dataset (UCI Machine Learning Repository)
+* **Frontend / UI:** Streamlit
+* **Model Training & Artifacts:** XGBoost (`enable_categorical=True`), Joblib, Scikit-Learn
+* **Explainability:** SHAP (TreeExplainer)
+* **Data Processing:** Pandas, NumPy
+* **Dataset:** German Credit Dataset (UCI Machine Learning Repository)
 
-## 📊 Key Features
-*   **Real-time Risk Assessment:** Instant Yes/No prediction with probability score.
-*   **Interactive "Why?" Analysis:** Waterfall charts showing exactly why a user was rejected.
-*   **User-Friendly Interface:** Simple sidebar inputs for non-technical users (Loan Officers).
+## 📊 Key Features & MLOps Architecture
+* **Decoupled Train-Inference Pipeline:** Pre-trained models, feature names, and statistical imputation defaults are serialized to `.pkl` files, eliminating web app startup latency.
+* **Instant Risk Probability Scoring:** Real-time credit default prediction with calibrated risk percentages.
+* **Feature-Level Explainability:** SHAP waterfall charts showing positive and negative forces driving approval/rejection decisions.
+* **Statistical Imputation Safeguards:** Fills unselected UI features with training set medians and modes (preventing silent inference corruption from magic numbers).
+* **Memory-Safe Plot Rendering:** Explicit figure lifecycle management (`plt.close()`) preventing memory leaks during Streamlit UI reruns.
 
 ## 📂 Project Structure
 ```bash
 CreditRiskProject/
-├── models/                  # Trained models (.pkl files)
-├── app.py                   # Streamlit Dashboard application
-├── train_model.py           # ML Pipeline (Data -> Preprocessing -> Training)
-├── requirements.txt         # Project dependencies
-└── README.md                # Documentation
+├── models/                      # Serialized ML artifacts (.pkl files)
+│   ├── xgboost_credit_model.pkl # Trained XGBoost classifier
+│   ├── shap_explainer.pkl       # Serialized SHAP TreeExplainer
+│   ├── feature_names.pkl        # Model feature schema
+│   └── feature_defaults.pkl     # Medians & modes for statistical imputation
+├── app.py                       # Real-time Streamlit web dashboard
+├── train_model.py               # Offline training & artifact serialization pipeline
+├── requirements.txt             # Python dependencies
+└── README.md                    # Project documentation
 ```
 ⚙️ How to Run Locally
 Clone the repository:
 ```Bash
-git clone https://github.com/YOUR_USERNAME/CreditRiskProject.git
+git clone https://github.com/Sahil-Patra/AI_Powered_Credit_Risk_Analyzer.git
 ```
 Install dependencies:
 ```Bash
@@ -50,7 +57,7 @@ Run the dashboard:
 streamlit run app.py
 ```
 
-## 📈 Model Performance
+## 📈 Model Performance & Engineering Highlights
 
-**Recall (Sensitivity)**: Optimized to catch potential defaulters.
-**Explainability**: Validated top predictors (Duration, Credit Amount, Checking Status) match banking domain knowledge.
+**Class Imbalance Optimization**: Utilizes native `scale_pos_weight` tuning based on dataset default ratios to prioritize recall on high-risk borrowers.
+**Auditability**: Validated top predictors (Duration, Credit Amount, Savings, Employment Status) align with Basel III banking risk standards.
